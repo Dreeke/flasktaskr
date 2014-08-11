@@ -66,4 +66,14 @@ def new_task():
 		flash('New entry was successfully posted. Thanks.')
 		return redirect(url_for('tasks'))
 
-	
+# Mark tasks as complete:
+@app.route('/complete/<int:task_id>/',)
+@login_required
+def complete(task_id):
+	g.db = connect_db()
+	cur = g.db.execute('update ftasks set status = 0 where task_id='+str(task_id))
+	g.db.commit()
+	g.db.close()
+	flash('The task was marked as complete.')
+	return redirect(url_for('tasks'))
+
