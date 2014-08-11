@@ -42,11 +42,12 @@ def login():
 def tasks():
 	g.db = connect_db()
 	cur = g.db.execute('select name, due_date, priority, task_id from ftasks where status=1')
-	open_tasks = [dict(name=row[0], due_date=row[1], priority=row[2], task_id=row['3']) for row in cur.fetchall()]
+	open_tasks = [dict(name=row[0], due_date=row[1], priority=row[2], task_id=row[3]) for row in cur.fetchall()]
 	cur = g.db.execute('select name, due_date, priority, task_id from ftasks where status=0')
-	closed_tasks = [dict(name=row[0], due_date=row[1], priority=row[2], task_id=row['3']) for row in cur.fetchall()]
+	closed_tasks = [dict(name=row[0], due_date=row[1], priority=row[2], task_id=row[3]) for row in cur.fetchall()]
 	g.db.close()
-	return render_template('tasks.html', form = AddTask(request.form), open_tasks=open_tasks, closed_tasks=closed_tasks)
+	return render_template('tasks.html',
+open_tasks=open_tasks, closed_tasks=closed_tasks)
 
 # Add new tasks
 @app.route('/add/', methods=['POST'])
@@ -56,7 +57,7 @@ def new_task():
 	name = request.form['name']
 	date = request.form['due_date']
 	priority = request.form['priority']
-	if not name or nor date or not priority:
+	if not name or not date or not priority:
 		flash('All fields are required. Please try again')
 		return redirect(url_for('tasks'))
 	else:
@@ -87,4 +88,3 @@ def delete_entry(task_id):
 	g.db.close()
 	flash('The task was deleted.')
 	return redirect(url_for('tasks'))
-	
